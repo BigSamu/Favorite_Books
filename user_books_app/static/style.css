@@ -1,0 +1,14 @@
+*{
+    /* margin: 0px;
+    padding: 0px; */
+    /* outline: 1px solid red; */
+}
+
+a.nav-link {
+    color:white;
+    text-decoration: underline;
+}
+
+#defaulBookAddFormDescription{
+    font-size: 12px;
+}

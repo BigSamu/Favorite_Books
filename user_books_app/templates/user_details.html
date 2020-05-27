@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Details</title>
+  
+    <!-- Load Personal Styles -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+
+    <!-- Load Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+<body>
+  <!-- I) Navigation Bar (Header Panel) -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+      <span class="navbar-brand mb-0 h1">Welcome {{request.session.name}}! </span>
+      <a class="nav-link ml-auto p-1" href="/logout">Log Out</a>
+  </nav>
+
+  <!-- II) Main Panel -->
+  <main role="main">
+    <div class="container-lg p-4">
+        <div class="row">
+            <div class="col-md-5">
+
+            <!-- Add Book Form -->
+                
+                <form class="border border-secondary p-5" action="/add_book_to_list" method="POST">
+                    {% csrf_token %}
+
+                    <p class="text-left h4 mb-4">Add a Favorite Book</p>
+
+                    <!-- Book Title -->
+                    <label for="defaulBookAddFormTitle">Book Title</label>
+                    <input type="text" id="defaulBookAddFormTitle" class="form-control mb-4" name="book_title">
+
+                    <!-- Book Description -->
+                    <label for="defaulBookAddFormDescription">Book Description</label>
+                    <textarea id="defaulBookAddFormDescription" class="form-control" name="book_description" rows="10"></textarea>
+
+                    <!-- Sign up button -->
+                    <div class="text-right">
+                        <button class="btn btn-success mt-4" type="submit">Add Book</button>
+                    </div>
+                </form>
+                
+            </div>
+
+            <!-- All Books -->
+            <div class="col-md-7">
+                
+                <div class="border border-secondary p-5">
+                    <p class=" text-left h4 mb-4">All Books</p>
+                    <div class="overflow-auto p-2" style="height:450px">
+                        {% for each_book in all_books %}
+                            <p class="mb-1"><a href="/books/{{each_book.id}}">{{each_book.title}}</a></p>
+                            <p class="small mb-1">(added by {{each_book.uploaded_by.first_name}} {{each_book.uploaded_by.last_name}})</p>
+                            {% if each_book in books_liked_by_current_user %}
+                                <p class="small"><i>this is one of your favorites</i></p>
+                            {%else%}
+                                <p class="small"><a href="/add_book_to_favorites/{{each_book.id}}">Add to Favorites</a></p>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- III) Footer panel -->
+<footer class="page-footer text-center text-white bg-secondary">
+    <p> © Favorite Books's Company 2020</p> 
+</footer>
+
+</body>
+</html>
