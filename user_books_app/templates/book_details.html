@@ -1,114 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Books Details</title>
-  
-    <!-- Load Personal Styles -->
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'style.css' %}">
+{% extends "base.html" %} 
+{% block title %} Book Details {% endblock %}
 
-    <!-- Load Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-</head>
-<body>
-  <!-- I) Navigation Bar (Header Panel) -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-      <span class="navbar-brand mb-0 h1">Welcome {{request.session.name}}! </span>
-      <a class="nav-link ml-auto p-1" href="/books">Go Back</a>
-      <a class="nav-link p-1" href="/">Log Out</a>
-      
-  </nav>
+{% block content%}
+<div class="row align-items-stretch">
+  <div class="col-md-6">
 
-  <!-- II) Main Panel -->
-  <main role="main">
-    <div class="container-lg p-4">
-        <div class="row">
-            <div class="col-md-6">
+    <!-- Books Details -->
+    {% if book_selected.uploaded_by.id == request.session.id %}
 
-            <!-- Books Details -->
-            {% if book_selected.uploaded_by.id == request.session.id %}
+      <form
+        class="border border-secondary p-5"
+        action="/books/{{book_selected.id}}/edit"
+        method="POST"
+      >
+        {% csrf_token %}
 
-            <form class="border border-secondary p-5" action="/add_book_to_list" method="POST">
-                {% csrf_token %}
+        <p class="text-left h4 mb-4">Edit a Favorite Book</p>
 
-                <!-- Book Title -->
-                <label for="defaulBookAddFormTitle">Book Title</label>
-                <input type="text" id="defaulBookAddFormTitle" class="form-control mb-3" name="book_title" placeholder="{{book_selected.title}}"" required>
+         <!-- Error messages -->
+         {% if messages %}
+         <ul id="messageErrors" class="mb-4 p-2">
+             Error Messages: {% for message in messages %}
+             <li>{{ message }}</li>
+             {% endfor %}
+         </ul>
+        {% endif %}
 
-                <!-- Added By -->
-                <p class="small mb-0"> Added by: {{book_selected.uploaded_by.first_name}} {{book_selected.uploaded_by.last_name}}</p>
 
-                <!-- Added =On -->
-                <p class="small mb-0"> Added on: {{book_selected.created_at}} </p>
+        <!-- Book Title -->
+        <label for="defaulBookAddFormTitle">Book Title</label>
+        <input type="text" id="defaulBookAddFormTitle" class="form-control mb-3"
+        name="book_title" value="{{book_selected.title}}">
 
-                <!-- Last updated -->
-                <p class="small"> Last updated: {{book_selected.updated_at}} </p>
+        <!-- Book Description -->
+        <label for="defaulBookAddFormDescription">Book Description</label>
+        <textarea
+          id="defaulBookAddFormDescription"
+          class="form-control"
+          name="book_description"
+          rows="10"
+        >{{book_selected.description}}</textarea>
 
-                <!-- Book Description -->
-                <label for="defaulBookAddFormDescription">Book Description</label>
-                <textarea id="defaulBookAddFormDescription" class="form-control" name="book_description" rows="10" placeholder="{{book_selected.description}}""></textarea>
-
-                <!-- Update and Delete button -->
-                <div class="text-right">
-                    <button class="btn btn-success mt-4" type="submit">Update</button>
-                    <button class="btn btn-danger mt-4" type="submit">Delete</button>
-                </div>
-            </form>
-
-            {% else %}
-
-                <!-- Book Selected -->
-                <p class="h5 my-2"> {{book_selected.title}}</p>
-
-                <!-- Added By -->
-                <p class="small mb-0"> Added by: {{book_selected.uploaded_by.first_name}} {{book_selected.uploaded_by.last_name}}</p>
-
-                <!-- Added =On -->
-                <p class="small mb-0"> Added on: {{book_selected.created_at}} </p>
-
-                <!-- Last updated -->
-                <p class="small"> Last updated: {{book_selected.updated_at}} </p>
-
-                <!-- Description -->
-                <p class="h6">Description:</p>
-                <p class="small"> {{book_selected.description}} </p>
-
-            {% endif %}
-                
-            </div>
-
-            <!-- Users who like Book -->
-            <div class="col-md-6">
-                
-                <div class="border border-secondary p-5">
-                    <p class=" text-left h5 mb-4">Users Who Like This Book:</p>
-                    <div class="overflow-auto p-2" style="height:400px">
-                        <ul>
-                        {% for each_user in book_selected.users_who_like.all %}
-                            <li>{{each_user.first_name}} {{each_user.last_name}}
-                            {% if each_user.id == request.session.id  %}
-                                <a href="/remove_book_from_favorites/{{book_selected.id}}">Un-Favorite</a>
-                            {% endif %}
-                            </li>
-                        {% endfor %}
-                        </ul>
-                        {% if book_selected not in books_liked_by_current_user %}
-                            <p> <a href="/add_book_to_favorites_function_2/{{book_selected.id}}">Add to Favorites</a></p>
-                        {% endif %}
-                    </div>
-                
-                </div>
-            </div>
+        <!-- Update and Delete button -->
+        <div class="text-right">
+          <button class="btn btn-success mt-4" type="submit">Update</button>
+          <a href="/books/{{book_selected.id}}/delete" class="btn btn-danger mt-4">Delete</a>
         </div>
+      </form>
+
+    {% else %}
+
+      <!-- Book Selected -->
+      <p class="h5 my-2">{{book_selected.title}}</p>
+
+      <!-- Added By -->
+      <p class="small mb-0">
+        Added by: {{book_selected.uploaded_by.first_name}}
+        {{book_selected.uploaded_by.last_name}}
+      </p>
+
+      <!-- Added =On -->
+      <p class="small mb-0">Added on: {{book_selected.created_at}}</p>
+
+      <!-- Last updated -->
+      <p class="small">Last updated: {{book_selected.updated_at}}</p>
+
+      <!-- Description -->
+      <p class="h6">Description:</p>
+      <p class="small">{{book_selected.description}}</p>
+
+      <p>
+        {% if book_selected not in books_liked_by_current_user %}
+          <u><a href="/books/{{book_selected.id}}/add_to_favorites">Add to Favorites</a></u>
+        {% else %}
+          <u><a href="/books/{{book_selected.id}}/remove_from_favorites">Remove from Favorites</a></u>
+        {% endif %}
+      </p>
+    {% endif %}
+   
+  </div>
+
+  <!-- Users who like Book -->
+  <div class="col-md-6">
+    <div class="border border-secondary p-5">
+      <p class="text-left h5 mb-4">Users Who Like This Book:</p>
+      <ul class="scrollable p-2" style="height: 425px">
+        {% for each_user in book_selected.users_who_like.all %}
+        <li> 
+          {{each_user.first_name}} {{each_user.last_name}} 
+        </li>
+        {% endfor %}
+      </ul>
     </div>
-</main>
-
-<!-- III) Footer panel -->
-<footer class="page-footer text-center text-white bg-secondary">
-    <p> © Favorite Books's Company 2020</p> 
-</footer>
-
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}

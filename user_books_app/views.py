@@ -1,28 +1,21 @@
+from urllib.parse import urlparse
 from django.shortcuts import render, redirect
 from .models import *
 import bcrypt
 from django.contrib import messages
+from django.urls import reverse
 
 # Create your views here.
 def index(request):
+    if 'name' in request.session:
+        return redirect('/books')
     return render(request,'index.html')
 
-def userDetails(request):
-    if 'name' in request.session:
-        
-        currentUser = User.objects.get(id=request.session['id'])
-        context = {
-            'all_books': Book.objects.all(),
-            'books_liked_by_current_user': currentUser.liked_books.all() 
-        }
-        return render(request,'user_details.html', context)
-    return redirect('/')
 
+# Register new user
 def register(request):
-    print(request.POST)
-    
-    errors = User.objects.validator(request.POST)
-    
+  
+    errors = User.objects.validatorSignUp(request.POST)
 
     if len(errors)>0:
         for key, value in errors.items():
@@ -41,19 +34,23 @@ def register(request):
     request.session['id'] = newUser.id
     return redirect('/books')
 
+# Login for current user
 def login(request):
     # login for current User
     
-    try:
-        loggedUser = User.objects.get(email=request.POST['email'])
-        if bcrypt.checkpw(request.POST['password'].encode(), loggedUser.password.encode()):
-            print(loggedUser.first_name, "logged user was signed in!")
-            request.session['name'] = loggedUser.first_name
-            request.session['id'] = loggedUser.id
-            return redirect('/books')
+    if request.method == 'POST':
+        errors = User.objects.validatorSignIn(request.POST)
+        
+        if len(errors)>0:
+            for key, value in errors.items():
+                messages.error(request, value)
+            return redirect('/')
 
-    except loggedUser.DoesNotExist:
-        loggedUser = None
+        loggedUser = User.objects.get(email=request.POST['email'])
+        print(loggedUser)
+        request.session['name'] = loggedUser.first_name
+        request.session['id'] = loggedUser.id
+        return redirect('/books')
 
     return redirect('/')
 
@@ -61,7 +58,21 @@ def logout(request):
     request.session.clear()
     return redirect('/')
 
-def addBooktoList(request):
+def home(request):
+    if 'name' in request.session:
+        
+        currentUser = User.objects.get(id=request.session['id'])
+        context = {
+            'all_books': Book.objects.all(),
+            'books_liked_by_current_user': currentUser.liked_books.all() 
+        }
+    
+        return render(request,'home.html', context)
+    return redirect('/')
+
+
+
+def add_book(request):
 
     errors = Book.objects.validator(request.POST)
 
@@ -81,26 +92,25 @@ def addBooktoList(request):
 
     return redirect('/books')
 
-def addBookToFavorites(request, book_id):
+def add_book_to_favorites(request, book_id):
 
     currentUser = User.objects.get(id=request.session['id'])
     bookSelected = Book.objects.get(id=book_id)
 
     bookSelected.users_who_like.add(currentUser)
-    print(request.path)
+    
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        prev_path = urlparse(referer).path
+    else:
+        prev_path = '/'
+  
+    if (prev_path == reverse('user_books_app:home')):
+        return redirect('/books')
+    else:
+        return redirect(f'/books/{str(book_id)}')
 
-    return redirect('/books')
-
-def addBookToFavoritesFunctionTwo(request, book_id):
-
-    currentUser = User.objects.get(id=request.session['id'])
-    bookSelected = Book.objects.get(id=book_id)
-
-    bookSelected.users_who_like.add(currentUser)
-
-    return redirect(f'/books/{str(book_id)}')
-
-def removeBookFromFavorites(request, book_id):
+def remove_book_from_favorites(request, book_id):
 
     currentUser = User.objects.get(id=request.session['id'])
     bookSelected = Book.objects.get(id=book_id)
@@ -109,7 +119,7 @@ def removeBookFromFavorites(request, book_id):
 
     return redirect(f'/books/{str(book_id)}')
 
-def booksDetails(request, book_id):
+def books_details(request, book_id):
     
     if 'name' in request.session:
         
@@ -121,24 +131,25 @@ def booksDetails(request, book_id):
         return render(request,'book_details.html', context)
     return redirect('/books')
 
-def updateBook(request):
+def edit_book(request, book_id):
    
     errors = Book.objects.validator(request.POST)
-
     if len(errors)>0:
         for key, value in errors.items():
             messages.error(request, value)
         return redirect(f'/books/{str(book_id)}')
 
-    currentUser = User.objects.get(id=request.session['id'])
+    
     bookToUpdate = Book.objects.get(id = book_id)
 
-    bookToUpdate
-
-    newBook.users_who_like.add(currentUser)
-
-    return redirect(f'/books/{str(book_id)}')
+    bookToUpdate.title = request.POST['book_title']
+    bookToUpdate.description = request.POST['book_description']
+    bookToUpdate.save()
+    
+    return redirect(f'/books')
    
 
-def deleteBook(request):
-    pass
+def remove_book(request, book_id):
+    bookToRemove = Book.objects.get(id=book_id)
+    bookToRemove.delete()
+    return redirect('/books')

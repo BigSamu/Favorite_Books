@@ -1,8 +1,9 @@
 from django.db import models
 import re
+import bcrypt
 
 class UserManager(models.Manager):
-    def validator(self, postData):
+    def validatorSignUp(self, postData):
         # Dictionary for saving the message errors
         errors = {}
         
@@ -24,6 +25,22 @@ class UserManager(models.Manager):
             errors['confirm_password'] = "Your password and confirm password must match."
         
         return errors
+    
+    def validatorSignIn(self, postData):
+        # Dictionary for saving the message errors
+        errors = {}
+
+        # email exists and password match?
+        try:
+            loggedUser = User.objects.get(email=postData['email'])
+            if not bcrypt.checkpw(postData['password'].encode(), loggedUser.password.encode()):
+                errors['loggedUser'] = "User or password does not exist in our database"
+ 
+        except User.DoesNotExist:
+            loggedUser = None
+            errors['loggedUser'] = "User or password does not exist in our database"
+        
+        return errors
 
 class BookManager(models.Manager):
     def validator(self, postData):
@@ -31,8 +48,7 @@ class BookManager(models.Manager):
         errors = {}
         
         # Validator for first and last name
-        if postData.get('book_title') == None:
-            print(postData.get('book_title'))
+        if postData['book_title'] == '':
             errors['book_title'] = "Title is required"
         
         if len(postData['book_description']) < 5:
