@@ -26,7 +26,7 @@ A simple Django web application implementing CRUD operations and authentication.
 
 _**Favorite Books App:** sign up and add your favorite books 📚 in our app 😃!!! Share them with others and add your favorites in your collection 🙌. Also update or delete details if you need 📝!!!._
 
-> Demo available in following [link](http://3.138.60.125/). Application deployed in AWS.
+<!-- > Demo available in following [link](http://3.138.60.125/). Application deployed in AWS. -->
 
 
 <br>
