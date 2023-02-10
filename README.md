@@ -142,13 +142,13 @@ To get a copy of this project and run it in your local environment, follow the s
 1. Clone the repo
 
    ```sh
-   git clone https://github.com/BigSamu/The_Wishes_Company.git
+   git clone https://github.com/BigSamu/Favorite_Books.git
    ```
 
 2. Go into the repository
 
    ```sh
-   cd The_Wishes_Company
+   cd Favorite_Books
    ```
 
 3. Activate virtual environemnt
@@ -344,18 +344,18 @@ Developed with ❤️ in Chile 🇨🇱
 
 <!-- Forks -->
 
-[forks-badge]: https://img.shields.io/github/forks/BigSamu/The_Wishes_Company.svg
-[forks-url]: https://github.com/BigSamu/The_Wishes_Company/network/members
+[forks-badge]: https://img.shields.io/github/forks/BigSamu/Favorite_Books.svg
+[forks-url]: https://github.com/BigSamu/Favorite_Books/network/members
 
 <!-- Stargazers -->
 
-[stars-badge]: https://img.shields.io/github/stars/BigSamu/The_Wishes_Company.svg
-[stars-url]: https://github.com/BigSamu/The_Wishes_Company/stargazers
+[stars-badge]: https://img.shields.io/github/stars/BigSamu/Favorite_Books.svg
+[stars-url]: https://github.com/BigSamu/Favorite_Books/stargazers
 
 <!-- Watchers -->
 
-[watchers-badge]: https://img.shields.io/github/watchers/BigSamu/The_Wishes_Company.svg
-[watchers-url]: https://github.com/BigSamu/The_Wishes_Company/watchers
+[watchers-badge]: https://img.shields.io/github/watchers/BigSamu/Favorite_Books.svg
+[watchers-url]: https://github.com/BigSamu/Favorite_Books/watchers
 
 <!-- License -->
 
