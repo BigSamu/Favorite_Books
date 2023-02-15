@@ -70,9 +70,9 @@ _**Favorite Books App:** sign up and add your favorite books ðŸ“š in our app ðŸ˜
 
 ## About The Project
 
-Educational project with the purpose of developing a basic implementation of a full-stack web application using Django framework and Python and HTML languages.
+Educational project with the purpose of developing a basic implementation of a full-stack web application using Django framework and Python and HTML as main programming languages.
 
-SQLite Database in repository with data already created. Existing users with following details if wanted to interact with their accounts:
+SQLite Database in repository with data already created. Existing users and their related credentials detailed below:
 
 * John Doe: 
   * email: johndoe@email.com
